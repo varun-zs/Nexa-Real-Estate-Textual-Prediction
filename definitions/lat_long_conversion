@@ -1,0 +1,50 @@
+-- Calculate latitude and longitude from concatenated address columns
+
+-- Define input table and columns
+#SET input_table=project_id.dataset_id.table_name;
+#SET address_column_1=Address_1;
+#SET address_column_2=Address_2;
+#SET address_column_3=Address_3;
+
+-- Query to calculate latitude and longitude and update input table
+CREATE OR REPLACE TABLE `{input_table}` AS
+WITH address_data AS (
+  SELECT
+    *,
+    CONCAT_WS(', ', {address_column_1}, {address_column_2}, {address_column_3}) AS full_address
+  FROM
+    `{input_table}`
+)
+SELECT
+  *,
+  ST_GEOGPOINT(
+    REGEXP_EXTRACT(
+      REGEXP_REPLACE(full_address, r'[^\w\s,]', ''),
+      r'([-+]?\d+\.\d+)[,\s]*([-+]?\d+\.\d+)'
+    )
+  ) AS location,
+  CAST(
+    SPLIT(
+      REGEXP_EXTRACT(
+        REGEXP_REPLACE(full_address, r'[^\w\s,]', ''),
+        r'([-+]?\d+\.\d+)[,\s]*([-+]?\d+\.\d+)'
+      ),
+      ','
+    )[SAFE_ORDINAL(1)]
+    AS FLOAT64
+  ) AS latitude,
+  CAST(
+    SPLIT(
+      REGEXP_EXTRACT(
+        REGEXP_REPLACE(full_address, r'[^\w\s,]', ''),
+        r'([-+]?\d+\.\d+)[,\s]*([-+]?\d+\.\d+)'
+      ),
+      ','
+    )[SAFE_ORDINAL(2)]
+    AS FLOAT64
+  ) AS longitude
+FROM
+  address_data;
+
+-- View results
+SELECT * FROM `{input_table}` LIMIT 10;
