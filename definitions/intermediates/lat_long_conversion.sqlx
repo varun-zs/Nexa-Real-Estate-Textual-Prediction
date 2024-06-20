@@ -1,3 +1,10 @@
+config {
+  type: "view",
+  columns: {
+    test: "A description for the test column",
+  }
+}
+
 -- Calculate latitude and longitude from concatenated address columns
 
 -- Define input table and columns
@@ -47,4 +54,4 @@ FROM
   address_data;
 
 -- View results
-SELECT * FROM `{input_table}` LIMIT 10;
+SELECT * FROM `{input_table}` LIMIT 10
