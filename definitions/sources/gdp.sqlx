@@ -1,0 +1,15 @@
+-- Table 3: Product Data
+config {
+  type: "declaration",
+  database: "your_project_id",
+  schema: "your_dataset_id",
+  name: "product_data"
+}
+SELECT * FROM EXTERNAL_TABLE(
+  'your_project_id.your_dataset_id.product_data',
+  'gs://your_bucket_name/product_data/*.csv',
+  [("product_id", "STRING"),
+   ("product_name", "STRING"),
+   ("category", "STRING"),
+   ("price", "FLOAT64")]
+);
