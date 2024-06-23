@@ -1,0 +1,32 @@
+-- File: definitions/financial_info_concat.sqlx
+
+config {
+  type: "table",
+  name: "financial_info_concat",
+  description: "Merged table of all timeseries data across all tables"
+}
+
+WITH all_timestamps AS (
+  SELECT DISTINCT timestamp_column
+  FROM (
+    SELECT timestamp_column FROM ${ref("table1")}
+    UNION ALL
+    SELECT timestamp_column FROM ${ref("table2")}
+    UNION ALL
+    SELECT timestamp_column FROM ${ref("table3")}
+    -- Add more UNION ALL statements for additional tables
+  )
+)
+
+SELECT
+  at.timestamp_column,
+  t1.*,
+  t2.*,
+  t3.*
+  -- Add more table references as needed
+FROM all_timestamps at
+LEFT JOIN ${ref("table1")} t1 ON at.timestamp_column = t1.timestamp_column
+LEFT JOIN ${ref("table2")} t2 ON at.timestamp_column = t2.timestamp_column
+LEFT JOIN ${ref("table3")} t3 ON at.timestamp_column = t3.timestamp_column
+-- Add more LEFT JOINs for additional tables
+ORDER BY at.timestamp_column
