@@ -1,15 +1,71 @@
--- Table 3: Product Data
+-- File: definitions/sources/financials.sqlx
+
+-- Import Table 1 from GCP Cloud Storage
 config {
   type: "declaration",
   database: "your_project_id",
   schema: "your_dataset_id",
-  name: "product_data"
+  name: "imported_table1"
 }
 SELECT * FROM EXTERNAL_TABLE(
-  'your_project_id.your_dataset_id.product_data',
-  'gs://your_bucket_name/product_data/*.csv',
-  [("product_id", "STRING"),
-   ("product_name", "STRING"),
-   ("category", "STRING"),
-   ("price", "FLOAT64")]
+  'your_project_id.your_dataset_id.imported_table1',
+  'gs://your_bucket_name/imported_table1/*.csv',
+  [("timestamp_column", "TIMESTAMP"), ("value1", "FLOAT64")]
 );
+
+-- Import Table 2 from GCP Cloud Storage
+config {
+  type: "declaration",
+  database: "your_project_id",
+  schema: "your_dataset_id",
+  name: "imported_table2"
+}
+SELECT * FROM EXTERNAL_TABLE(
+  'your_project_id.your_dataset_id.imported_table2',
+  'gs://your_bucket_name/imported_table2/*.csv',
+  [("timestamp_column", "TIMESTAMP"), ("value2", "FLOAT64")]
+);
+
+-- Import Table 3 from GCP Cloud Storage
+config {
+  type: "declaration",
+  database: "your_project_id",
+  schema: "your_dataset_id",
+  name: "imported_table3"
+}
+SELECT * FROM EXTERNAL_TABLE(
+  'your_project_id.your_dataset_id.imported_table3',
+  'gs://your_bucket_name/imported_table3/*.csv',
+  [("timestamp_column", "TIMESTAMP"), ("value3", "FLOAT64")]
+);
+
+-- Merge the 3 imported tables into one final table
+config {
+  type: "table",
+  name: "merged_timeseries_data",
+  description: "Merged table of timeseries data from 3 imported tables"
+}
+
+WITH all_timestamps AS (
+  SELECT DISTINCT timestamp_column
+  FROM (
+    SELECT timestamp_column FROM ${ref("imported_table1")}
+    UNION ALL
+    SELECT timestamp_column FROM ${ref("imported_table2")}
+    UNION ALL
+    SELECT timestamp_column FROM ${ref("imported_table3")}
+  )
+)
+
+SELECT
+  at.timestamp_column,
+  it1.value1,
+  it2.value2,
+  it3.value3
+FROM all_timestamps at
+LEFT JOIN ${ref("imported_table1")} it1 ON at.timestamp_column = it1.timestamp_column
+LEFT JOIN ${ref("imported_table2")} it2 ON at.timestamp_column = it2.timestamp_column
+LEFT JOIN ${ref("imported_table3")} it3 ON at.timestamp_column = it3.timestamp_column
+ORDER BY at.timestamp_column
+
+```
