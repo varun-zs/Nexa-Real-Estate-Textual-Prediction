@@ -12,9 +12,11 @@ The goal of this project is to develop a robust deep learning model that can acc
 4. ROI (Return on Investment)
 5. Rental Demand
 6. Vacancy Rate
-7. Median Household Income
+7. Tenant Turnover Rate
 8. Buy
 9. Net Cash Flow
+10. Maintenance Costs
+11. Risk Factor
 
 The input/independent variables fed into the model are as follows: 
 
@@ -37,20 +39,20 @@ The input/independent variables fed into the model are as follows:
 17) Home_Age	
 18) Home_Size_Sqft	
 19) Home_Type	
-20) Home_Maintenance	
-21) Home_Repair	
-22) Area_Population	
-23) Household_Profession	
-24) Political_Party	
-25) Economy_Region	
-26) Catastrophe_Risk	
-27) Immigrant_No	
-28) Interest Rates	
-29) Pandemic Probability	
-30) Mortgage Rates	
-31) Inflation Rates	
-32) Unemployment_Rates	
-33) Investor_Activity_Region	
+20) Home_Repair	
+21) Area_Population	
+22) Household_Profession	
+23) Political_Party	
+24) Economy_Region	
+25) Catastrophe_Risk	
+26) Immigrant_No	
+27) Interest Rates	
+28) Pandemic Probability	
+29) Mortgage Rates	
+30) Inflation Rates	
+31) Unemployment_Rates	
+32) Investor_Activity_Region	
+33) Median Household Income
 
 
 The model will leverage the strengths of Temporal Convolutional Networks (TCN), Long Short-Term Memory (LSTM), and Gated Recurrent Units (GRU) with self-attention mechanisms to capture complex patterns and long-term dependencies in the data.
