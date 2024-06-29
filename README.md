@@ -51,7 +51,7 @@ The input/independent variables fed into the model are as follows:
 29) Mortgage Rates	
 30) Inflation Rates	
 31) Unemployment_Rates	
-32) Investor_Activity_Region	
+32) Investor_Activity_Region (Rental Yield, New Dwellings and Buy-to-let transactions)	
 33) Median Household Income
 
 
