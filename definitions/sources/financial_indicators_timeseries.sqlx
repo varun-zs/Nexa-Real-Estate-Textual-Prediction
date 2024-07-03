@@ -1,0 +1,84 @@
+-- File: definitions/sources/financial_indicators_timeseries.sqlx
+
+config {
+  type: "table",
+  database: "your_project_id",
+  schema: "your_dataset_id",
+  name: "financial_indicators_timeseries"
+}
+
+WITH 
+inflation_rates_table AS (
+  SELECT 
+    FORMAT_TIMESTAMP('%m/%Y', PARSE_TIMESTAMP('%m/%d/%Y', date)) AS timestamp, 
+    inflation_rate AS inflation_rates
+    FROM EXTERNAL_TABLE(
+    'your_project_id.your_dataset_id.timeseries1',
+    'gs://nexa_real_estate/United Kingdom/inflation_rates.csv',
+    [("date", "TIMESTAMP"), ("inflation_rate", "FLOAT64")]
+  )
+),
+political_party_table AS (
+   SELECT 
+    FORMAT_TIMESTAMP('%m/%Y', PARSE_TIMESTAMP('%d/%m/%Y', Date)) AS timestamp, 
+    Party AS political_party
+    FROM EXTERNAL_TABLE(
+    'your_project_id.your_dataset_id.timeseries1',
+    'gs://nexa_real_estate/United Kingdom/political_party.csv',
+    [("Party", "STRING"), ("Date", "TIMESTAMP")]
+  )
+),
+interest_rates_table AS (
+  SELECT 
+    FORMAT_TIMESTAMP('%m/%Y', PARSE_TIMESTAMP('%Y-%m', date)) AS timestamp, 
+    interest_rate AS interest_rates
+    FROM EXTERNAL_TABLE(
+    'your_project_id.your_dataset_id.timeseries2',
+    'gs://nexa_real_estate/United Kingdom/interest_rate_monthly.csv',
+    [("date", "TIMESTAMP"), ("interest_rate", "FLOAT64")]
+  )
+),
+mortgage_rates_table AS (
+  SELECT 
+    FORMAT_TIMESTAMP('%m/%Y', PARSE_TIMESTAMP('%d/%m/%Y', date)) AS timestamp,
+    (variable_rate + fixed_rate) / 2 AS mortgage_rates
+  FROM EXTERNAL_TABLE(
+    'your_project_id.your_dataset_id.timeseries3',
+    'gs://nexa_real_estate/United Kingdom/Mortgage_Rates.csv',
+    [("date", "TIMESTAMP"), ("variable_rate", "FLOAT64"), ("fixed_rate", "FLOAT64")]
+  )
+),
+pandemic_severity_table AS (
+  SELECT 
+    FORMAT_TIMESTAMP('%m/%Y', PARSE_TIMESTAMP('%Y-%m-%d', Month)) AS timestamp,
+    value / 2 AS pandemic_severity_rate
+  FROM EXTERNAL_TABLE(
+    'your_project_id.your_dataset_id.timeseries3',
+    'gs://nexa_real_estate/United Kingdom/pandemic_severity.csv',
+    [("Month", "TIMESTAMP"), ("value", "FLOAT64")]
+  )
+)
+
+SELECT
+  COALESCE(t1.timestamp, t2.timestamp, t3.timestamp, t4.timestamp, t5.timestamp) AS timestamp,
+  t1.inflation_rates,
+  t2.political_party
+  t3.interest_rates,
+  t4.mortgage_rates
+  t5.pandemic_severity_rate
+FROM 
+  inflation_rates_table t1
+FULL OUTER JOIN
+  political_party_table t2
+  ON t1.timestamp = t2.timestamp
+FULL OUTER JOIN
+  interest_rates_table t3
+  ON COALESCE(t1.timestamp, t2.timestamp) = t3.timestamp
+FULL OUTER JOIN
+  mortgage_rates_table t4
+  ON COALESCE(t1.timestamp, t2.timestamp, t3.timestamp) = t4.timestamp 
+FULL OUTER JOIN
+  pandemic_severity_table t5
+  ON COALESCE(t1.timestamp, t2.timestamp, t3.timestamp, t4.timestamp) = t5.timestamp    
+ORDER BY
+  timestamp
