@@ -1,0 +1,9 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "political_party_table"
+}
+
+CREATE EXTERNAL TABLE
+  test-424200.uk_real_estate.political_party_table OPTIONS ( format = 'CSV',
+    uris = ['gs://nexa_real_estate/United Kingdom/political_party.csv'])

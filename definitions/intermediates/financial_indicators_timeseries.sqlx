@@ -62,9 +62,9 @@ pandemic_severity_table AS (
 SELECT
   COALESCE(t1.timestamp, t2.timestamp, t3.timestamp, t4.timestamp, t5.timestamp) AS timestamp,
   t1.inflation_rates,
-  t2.political_party
+  t2.political_party,
   t3.interest_rates,
-  t4.mortgage_rates
+  t4.mortgage_rates,
   t5.pandemic_severity_rate
 FROM 
   inflation_rates_table t1

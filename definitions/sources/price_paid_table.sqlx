@@ -1,0 +1,9 @@
+config {
+    type: "table",
+    schema: "united_kingdom_real_estate",
+    name: "price_paid_table"
+}
+
+CREATE EXTERNAL TABLE
+  test-424200.united_kingdom_real_estate.price_paid_table OPTIONS ( format = 'CSV',
+    uris = ['gs://nexa_real_estate/United Kingdom/pp-complete.csv'] )

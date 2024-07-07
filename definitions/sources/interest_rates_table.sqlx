@@ -1,0 +1,16 @@
+config {
+    type: "table",
+    schema: "uk_real_estate",
+    name: "interest_rates_table"
+}
+
+CREATE EXTERNAL TABLE
+  test-424200.uk_real_estate.interest_rates_table ( 
+    date DATE,
+    interest_rate FLOAT64,
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/interest_rate_monthly.csv'],
+      skip_leading_rows = 1
+    )

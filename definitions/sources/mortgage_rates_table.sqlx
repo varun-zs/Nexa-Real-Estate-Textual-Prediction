@@ -1,0 +1,17 @@
+config {
+    type: "table",
+    schema: "uk_real_estate",
+    name: "mortgage_rates_table"
+}
+
+CREATE EXTERNAL TABLE
+  test-424200.uk_real_estate.mortgage_rates_table ( 
+    date DATE,
+    variable_rate FLOAT64,
+    fixed_rate FLOAT64
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/Mortgage_Rates.csv'],
+      skip_leading_rows = 1
+    )
