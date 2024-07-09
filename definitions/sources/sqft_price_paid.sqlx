@@ -1,0 +1,30 @@
+config {
+    type: "table",
+    schema: "uk_real_estate",
+    name: "sqft_paid_table"
+}
+
+CREATE OR REPLACE EXTERNAL TABLE
+  test-424200.uk_real_estate.sqft_paid_table ( 
+    priceper FLOAT64,
+    transaction_year INT,
+    transfer_date STRING,
+    home_type STRING,
+    duration STRING,
+    home_value FLOAT64,
+    postcode STRING,
+    lad21cd STRING,
+    transaction_id STRING,
+    id INT,
+    tf_area FLOAT64,
+    home_bedrooms FLOAT64,
+    classt INT,
+    curent_energy_efficiency INT,
+    potential_energy_efficiency INT,
+    construction_age_band STRING
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/sqft_pp_updated.csv'],
+      skip_leading_rows = 1
+    )

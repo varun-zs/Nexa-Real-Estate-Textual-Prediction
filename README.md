@@ -6,9 +6,9 @@ This repository contains the code and queries for data transformation and prepro
 
 The goal of this project is to develop a robust deep learning model that can accurately predict multiple real estate metrics, including:
 
-1. Home_Value
+1. Home_Value -
 2. Rental_Yield
-3. Square_Feet_Price
+3. Square_Feet_Price -
 4. ROI (Return on Investment)
 5. Rental Demand
 6. Vacancy Rate
@@ -30,29 +30,30 @@ The input/independent variables fed into the model are as follows:
 8) Prox_Car_Park	
 9) POI_Density	
 10) Crime_Rates	
-11) Home_Size_Bedroom	
+11) Home_Size_Bedroom -	
 12) Home_Address_Lat	
 13) Home_Address_Long	
-14) Home_Address_Postcode	
-15) Home_Address_County	
-16) Home_Address_Region	
-17) Home_Age	
-18) Home_Size_Sqft	
-19) Home_Type	
+14) Home_Address_Postcode -	
+15) Home_Address_County	-
+16) Home_Address_Region	-
+17) Home_Age -	
+18) Home_Size_Sqft -	
+19) Home_Type -	
 20) Home_Repair	
 21) Area_Population	
 22) Household_Profession	
-23) Political_Party	
+23) Political_Party -	
 24) Economy_Region	
 25) Catastrophe_Risk	
 26) Immigrant_No	
-27) Interest Rates	
-28) Pandemic Probability	
-29) Mortgage Rates	
-30) Inflation Rates	
+27) Interest Rates -	
+28) Pandemic Probability -
+29) Mortgage Rates -
+30) Inflation Rates -
 31) Unemployment_Rates	
 32) Investor_Activity_Region (Rental Yield, New Dwellings and Buy-to-let transactions)	
 33) Median Household Income
+34) Current_Energy_Efficiency
 
 
 The model will leverage the strengths of Temporal Convolutional Networks (TCN), Long Short-Term Memory (LSTM), and Gated Recurrent Units (GRU) with self-attention mechanisms to capture complex patterns and long-term dependencies in the data.

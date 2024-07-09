@@ -1,9 +1,29 @@
 config {
     type: "table",
-    schema: "united_kingdom_real_estate",
+    schema: "uk_real_estate",
     name: "price_paid_table"
 }
 
-CREATE EXTERNAL TABLE
-  test-424200.united_kingdom_real_estate.price_paid_table OPTIONS ( format = 'CSV',
-    uris = ['gs://nexa_real_estate/United Kingdom/pp-complete.csv'] )
+CREATE OR REPLACE EXTERNAL TABLE
+  test-424200.uk_real_estate.price_paid_table ( 
+    transaction_id STRING,
+    home_value FLOAT64,
+    transfer_date STRING,
+    postcode STRING,
+    home_type STRING,
+    home_age BOOL,
+    duration STRING,
+    paon STRING,
+    saon STRING,
+    home_address_street STRING,
+    home_address_locality STRING,
+    home_address_city STRING,
+    home_address_district STRING,
+    home_address_county STRING,
+    buy_to_let STRING,
+    record_status STRING
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/pp-complete.csv']
+    )

@@ -4,7 +4,7 @@ config {
     name: "inflation_rates_table"
 }
 
-CREATE EXTERNAL TABLE
+CREATE OR REPLACE EXTERNAL TABLE
   test-424200.uk_real_estate.inflation_rates_table ( 
     date DATE,
     inflation_rate FLOAT64,

@@ -5,5 +5,12 @@ config {
 }
 
 CREATE EXTERNAL TABLE
-  test-424200.uk_real_estate.political_party_table OPTIONS ( format = 'CSV',
-    uris = ['gs://nexa_real_estate/United Kingdom/political_party.csv'])
+  test-424200.uk_real_estate.political_party_table ( 
+    party STRING,
+    date DATE
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/political_party.csv'],
+      skip_leading_rows = 1
+    )

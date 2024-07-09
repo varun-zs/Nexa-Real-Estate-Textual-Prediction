@@ -1,0 +1,30 @@
+config {
+  type: "view",
+  schema: "uk_real_estate",
+  name: "pp_merge"
+}
+
+-- Create a new column in table2 and join table1 and table2
+select
+  t1.home_value AS home_value,
+  t1.postcode AS home_address_postcode,
+  t1.transfer_date AS transfer_date,
+  t1.home_type AS home_type,
+  t1.home_age AS home_age,
+  t1.duration AS duration,
+  t1.home_address_street AS home_address_street,
+  t1.home_address_locality AS home_address_locality,
+  t1.home_address_city AS home_address_city,
+  t1.home_address_district AS home_address_district,
+  t1.home_address_county AS home_address_county,
+  t1.buy_to_let AS buy_to_let,
+  t2.priceper AS sqft_price,
+  t2.tf_area AS home_sqft,
+  t2.home_bedrooms AS home_size_bedrooms,
+  t2.curent_energy_efficiency AS home_current_energy
+from
+  ${ref("price_paid_table")} t1
+left join
+  ${ref("sqft_paid_table")} t2
+on
+  t1.transaction_id = t2.transaction_id
