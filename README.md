@@ -43,17 +43,18 @@ The input/independent variables fed into the model are as follows:
 21) Area_Population	
 22) Household_Profession	
 23) Political_Party -	
-24) Economy_Region	
+24) Economy_Region -
 25) Catastrophe_Risk	
 26) Immigrant_No	
 27) Interest Rates -	
 28) Pandemic Probability -
 29) Mortgage Rates -
 30) Inflation Rates -
-31) Unemployment_Rates	
+31) Employment_Rates -	
 32) Investor_Activity_Region (Rental Yield, New Dwellings and Buy-to-let transactions)	
-33) Median Household Income
-34) Current_Energy_Efficiency
+33) Median Household Income -
+34) Current_Energy_Efficiency -
+35) Rental_Counts_Area
 
 
 The model will leverage the strengths of Temporal Convolutional Networks (TCN), Long Short-Term Memory (LSTM), and Gated Recurrent Units (GRU) with self-attention mechanisms to capture complex patterns and long-term dependencies in the data.

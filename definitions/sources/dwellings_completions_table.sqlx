@@ -1,0 +1,18 @@
+config {
+    type: "table",
+    schema: "uk_real_estate",
+    name: "dwellings_completion_table"
+}
+
+CREATE OR REPLACE EXTERNAL TABLE
+  test-424200.uk_real_estate.dwellings_completion_table ( 
+    area_code STRING,
+    home_address_region STRING,
+    home_address_city STRING,
+    timeseries STRING,
+    completions_annual INTEGER
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/uk_dwellings_timeseries.csv']
+    )

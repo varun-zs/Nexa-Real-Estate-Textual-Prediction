@@ -4,10 +4,10 @@ config {
   name: "political_party_table"
 }
 
-CREATE EXTERNAL TABLE
+CREATE OR REPLACE EXTERNAL TABLE
   test-424200.uk_real_estate.political_party_table ( 
     party STRING,
-    date DATE
+    date STRING
     ) 
     OPTIONS ( 
       format = 'CSV',

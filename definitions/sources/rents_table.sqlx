@@ -1,0 +1,54 @@
+config {
+    type: "table",
+    schema: "uk_real_estate",
+    name: "rents_table"
+}
+
+CREATE OR REPLACE EXTERNAL TABLE
+  test-424200.uk_real_estate.rents_table ( 
+    time_period STRING,
+    area_code STRING,
+    area_name STRING,
+    region STRING,
+    index FLOAT64,
+    monthly_change FLOAT64,
+    annual_change FLOAT64,
+    rental_price INTEGER,
+    index_one_bed FLOAT64,
+    monthly_change_one_bed FLOAT64,
+    annual_change_one_bed FLOAT64,
+    rental_price_one_bed FLOAT64,
+    index_two_bed FLOAT64,
+    monthly_change_two_bed FLOAT64,
+    annual_change_two_bed FLOAT64,
+    rental_price_two_bed FLOAT64,
+    index_three_bed FLOAT64,
+    monthly_change_three_bed FLOAT64,
+    annual_change_three_bed FLOAT64,
+    rental_price_three_bed FLOAT64,
+    index_four_bed FLOAT64,
+    monthly_change_four_bed FLOAT64,
+    annual_change_four_bed FLOAT64,
+    rental_price_four_bed FLOAT64,
+    index_detached FLOAT64,
+    monthly_change_detached FLOAT64,
+    annual_change_detached FLOAT64,
+    rental_price_detached FLOAT64,
+    index_semidetached FLOAT64,
+    monthly_change_semidetached FLOAT64,
+    annual_change_semidetached FLOAT64,
+    rental_price_semidetached FLOAT64,
+    index_terraced FLOAT64,
+    monthly_change_terraced FLOAT64,
+    annual_change_terraced FLOAT64,
+    rental_price_terraced FLOAT64,
+    index_flat_maisonette FLOAT64,
+    monthly_change_flat_maisonette FLOAT64,
+    annual_change_flat_maisonette FLOAT64,
+    rental_price_flat_maisonette FLOAT64 
+    ) 
+    OPTIONS ( 
+        format = 'CSV',
+        uris = ['gs://nexa_real_estate/United Kingdom/price_index_private_rent_2015_2023.csv'],
+        skip_leading_rows = 1 
+    )

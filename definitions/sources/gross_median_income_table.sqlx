@@ -1,0 +1,18 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "gross_median_income_table"
+}
+
+CREATE OR REPLACE EXTERNAL TABLE
+  test-424200.uk_real_estate.gross_median_income_table ( 
+    area_code STRING,
+    area_name STRING,
+    period STRING,
+    gross_median_income FLOAT64
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/median_household_income_2008_2023.csv'],
+      skip_leading_rows = 1
+    )

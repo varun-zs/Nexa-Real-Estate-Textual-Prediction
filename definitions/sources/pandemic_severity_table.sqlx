@@ -4,9 +4,9 @@ config {
     name: "pandemic_severity_table"
 }
 
-CREATE EXTERNAL TABLE
+CREATE OR REPLACE EXTERNAL TABLE
   test-424200.uk_real_estate.pandemic_severity_table ( 
-    month DATE,
+    month STRING,
     value FLOAT64
     ) 
     OPTIONS ( 

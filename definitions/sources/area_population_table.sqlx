@@ -1,0 +1,17 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "area_population_table"
+}
+
+CREATE OR REPLACE EXTERNAL TABLE
+  test-424200.uk_real_estate.area_population_table (
+    area_name STRING,
+    period STRING,
+    population_value STRING
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/area_population.csv'],
+      skip_leading_rows = 1
+    )

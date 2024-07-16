@@ -6,7 +6,7 @@ config {
 
 CREATE OR REPLACE EXTERNAL TABLE
   test-424200.uk_real_estate.inflation_rates_table ( 
-    date DATE,
+    date STRING,
     inflation_rate FLOAT64,
     ) 
     OPTIONS ( 
