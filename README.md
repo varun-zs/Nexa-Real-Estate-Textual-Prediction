@@ -39,8 +39,7 @@ The input/independent variables fed into the model are as follows:
 17) Home_Age -	
 18) Home_Size_Sqft -	
 19) Home_Type -	
-20) Home_Repair	
-21) Area_Population	
+21) Area_Population	-
 22) Household_Profession	
 23) Political_Party -	
 24) Economy_Region -
