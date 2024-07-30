@@ -50,12 +50,13 @@ The input/independent variables fed into the model are as follows:
 29) Mortgage Rates -
 30) Inflation Rates -
 31) Employment_Rates -	
-32) Investor_Activity_Region (Rental Yield, New Dwellings and Buy-to-let transactions)	
-33) Median Household Income -
-34) Current_Energy_Efficiency -
-35) Rental_Counts_Area
-36) Rental_Yield
-37) Foreign Investment
+32) New Dwellings
+33) Buy-to-let transactions
+34) Median Household Income -
+35) Current_Energy_Efficiency -
+36) Rental_Counts_Area
+37) Rental_Yield
+38) Foreign Investment
 
 
 The model will leverage the strengths of Temporal Convolutional Networks (TCN), Long Short-Term Memory (LSTM), and Gated Recurrent Units (GRU) with self-attention mechanisms to capture complex patterns and long-term dependencies in the data.
