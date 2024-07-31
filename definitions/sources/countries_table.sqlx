@@ -1,0 +1,48 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "countries_table"
+}
+
+-- Declare start and end dates
+DECLARE start_date DATE DEFAULT DATE '1995-01-01';
+DECLARE end_date DATE DEFAULT DATE '2023-12-01';
+
+-- Define regions for the countries
+CREATE OR REPLACE TABLE uk_real_estate.countries_table AS
+WITH regions AS (
+  SELECT 'England' AS country, 'London' AS region UNION ALL
+  SELECT 'England' AS country, 'North East' AS region UNION ALL
+  SELECT 'England' AS country, 'North West' AS region UNION ALL
+  SELECT 'England' AS country, 'Yorkshire' AS region UNION ALL
+  SELECT 'England' AS country, 'East Midlands' AS region UNION ALL
+  SELECT 'England' AS country, 'West Midlands' AS region UNION ALL
+  SELECT 'England' AS country, 'South East' AS region UNION ALL
+  SELECT 'England' AS country, 'East of England' AS region UNION ALL
+  SELECT 'England' AS country, 'South West' AS region UNION ALL
+  SELECT 'Wales' AS country, 'Wales' AS region
+),
+
+-- Generate date range and combine with countries and regions
+date_range AS (
+  SELECT
+    DATE_ADD(start_date, INTERVAL (month_number - 1) MONTH) AS date
+  FROM
+    UNNEST(GENERATE_ARRAY(1, 12 * (EXTRACT(YEAR FROM end_date) - EXTRACT(YEAR FROM start_date)) + EXTRACT(MONTH FROM end_date) - EXTRACT(MONTH FROM start_date) + 1)) AS month_number
+),
+
+base_table AS (
+  SELECT
+    DATE_TRUNC(date, MONTH) AS time_period,
+    r.country,
+    r.region
+  FROM
+    date_range,
+    regions r
+)
+SELECT
+  time_period,
+  country,
+  region
+FROM
+  base_table

@@ -1,0 +1,18 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "net_immigration_table"
+}
+
+CREATE OR REPLACE EXTERNAL TABLE
+  test-424200.uk_real_estate.net_immigration_table (
+    period STRING,
+    area_code STRING,
+    area_name STRING,
+    net_immigration_value STRING
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/Uk_international_population_2002_2017.csv'],
+      skip_leading_rows = 1
+    )

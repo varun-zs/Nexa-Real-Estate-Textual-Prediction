@@ -1,0 +1,25 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "financial_data_merge_table"
+}
+
+-- Create a view with specified columns from each table
+CREATE OR REPLACE TABLE `uk_real_estate.financial_data_merge_table` AS
+SELECT 
+  DATE_TRUNC(PARSE_DATE('%Y-%m', t1.date), MONTH) AS timeseries,
+  t1.interest_rate AS interest_rate,
+  t2.inflation_rate AS inflation_rate,
+  t3.Party AS political_party,
+  (t4.variable_rate + t4.fixed_rate) / 2 AS mortgage_rates,
+  t5.value AS pandemic_severity_rate
+FROM
+  ${ref("interest_rates_table")} t1
+LEFT JOIN ${ref("inflation_rates_table")} t2
+ON DATE_TRUNC(PARSE_DATE('%Y-%m', t1.date), MONTH) = DATE_TRUNC(PARSE_DATE('%m/%d/%Y', t2.date), MONTH)
+LEFT JOIN ${ref("political_party_table")} t3
+ON DATE_TRUNC(PARSE_DATE('%Y-%m', t1.date), MONTH) = DATE_TRUNC(PARSE_DATE('%Y-%m-%d', t3.date), MONTH)
+LEFT JOIN ${ref("mortgage_rates_table")} t4
+ON DATE_TRUNC(PARSE_DATE('%Y-%m', t1.date), MONTH) = DATE_TRUNC(PARSE_DATE('%Y/%m', t4.date), MONTH)
+LEFT JOIN ${ref("pandemic_severity_table")} t5
+ON DATE_TRUNC(PARSE_DATE('%Y-%m', t1.date), MONTH) = DATE_TRUNC(PARSE_DATE('%Y-%m-%d', t5.month), MONTH)

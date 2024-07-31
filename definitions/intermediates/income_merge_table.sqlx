@@ -1,0 +1,74 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "income_merge_table"
+}
+
+-- Create or replace the view
+CREATE OR REPLACE TABLE `uk_real_estate.income_merge_table` AS
+
+WITH date_series AS (
+  SELECT
+    DATE_TRUNC(DATE_ADD(DATE '1995-01-01', INTERVAL n MONTH), MONTH) AS datemonth
+  FROM
+    UNNEST(GENERATE_ARRAY(0, DATE_DIFF(DATE '2023-12-01', DATE '1995-01-01', MONTH))) AS n
+),
+
+area_info AS (
+  SELECT
+    t1.area_code,
+    t1.area_name
+  FROM
+    ${ref("gross_disposable_income_table")} t1
+  GROUP BY
+    t1.area_code, t1.area_name
+),
+
+all_combinations AS (
+  SELECT
+    ds.datemonth AS timeseries,
+    ai.area_code,
+    ai.area_name
+  FROM
+    date_series ds
+  CROSS JOIN
+    area_info ai
+),
+
+income_data AS (
+  SELECT
+    DATE_TRUNC(PARSE_DATE('%Y', t1.period), YEAR) AS year,
+    t1.area_code AS area_code,
+    t1.area_name AS area_name,
+    (t1.gross_disposable_income / 12) AS gross_disposable_income,
+    t2.employment_rate AS employment_rate,
+    t3.gross_median_income AS gross_median_income
+  FROM
+    ${ref("gross_disposable_income_table")} t1
+  FULL JOIN ${ref("employment_rates_table")} t2
+  ON t1.area_code = t2.area_code AND
+     t1.area_name = t2.area_name AND
+     DATE_TRUNC(PARSE_DATE('%Y', t1.period), YEAR) = DATE_TRUNC(PARSE_DATE('%m/%d/%Y', t2.period), YEAR)
+  FULL JOIN ${ref("gross_median_income_table")} t3
+  ON t1.area_code = t3.area_code AND
+     t1.area_name = t3.area_name AND
+     DATE_TRUNC(PARSE_DATE('%Y', t1.period), YEAR) = DATE_TRUNC(PARSE_DATE('%Y', t3.period), YEAR)
+)
+
+SELECT
+  ac.timeseries,
+  ac.area_code,
+  ac.area_name,
+  id.gross_disposable_income,
+  id.employment_rate,
+  id.gross_median_income
+FROM
+  all_combinations ac
+LEFT JOIN
+  income_data id
+ON
+  ac.area_code = id.area_code AND
+  ac.area_name = id.area_name AND
+  DATE_TRUNC(ac.timeseries, YEAR) = id.year
+ORDER BY
+  ac.timeseries, ac.area_code, ac.area_name

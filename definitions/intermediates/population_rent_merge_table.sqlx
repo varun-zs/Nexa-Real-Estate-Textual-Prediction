@@ -1,0 +1,174 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "population_rent_merge_table"
+}
+
+-- Create or replace the view
+CREATE OR REPLACE TABLE `uk_real_estate.population_rent_merge_table` AS
+WITH date_series AS (
+  SELECT
+    DATE_TRUNC(DATE_ADD(DATE '1995-01-01', INTERVAL n MONTH), MONTH) AS timeseries
+  FROM
+    UNNEST(GENERATE_ARRAY(0, DATE_DIFF(DATE '2023-12-01', DATE '1995-01-01', MONTH))) AS n
+),
+
+area_info AS (
+  SELECT
+    t1.area_code,
+    t1.area_name,
+    t1.region AS home_address_region
+  FROM
+    ${ref("rents_table")} t1
+  GROUP BY
+    t1.area_code, t1.area_name, t1.region
+),
+
+all_combinations AS (
+  SELECT
+    ds.timeseries,
+    ai.area_code,
+    ai.area_name,
+    ai.home_address_region
+  FROM
+    date_series ds
+  CROSS JOIN
+    area_info ai
+),
+
+joined_data AS (
+  SELECT
+    ac.timeseries,
+    ac.home_address_region,
+    ac.area_code,
+    ac.area_name,
+    t1.rental_price_one_bed,
+    t1.rental_price_two_bed,
+    t1.rental_price_three_bed,
+    t1.rental_price_four_bed,
+    t1.rental_price_detached,
+    t1.rental_price_flat_maisonette,
+    t1.rental_price_semidetached,
+    t1.rental_price_terraced,
+    SAFE_CAST(t2.population_value AS FLOAT64) AS population_value,
+    t3.postcode
+  FROM
+    all_combinations ac
+  LEFT JOIN
+    ${ref("rents_table")} t1
+  ON
+    ac.area_code = t1.area_code AND
+    ac.area_name = t1.area_name AND
+    ac.home_address_region = t1.region AND
+    FORMAT_DATE('%Y-%m', ac.timeseries) = FORMAT_DATE('%Y-%m', PARSE_DATE('%b-%y', t1.time_period))
+  LEFT JOIN
+    ${ref("area_population_table")} t2
+  ON
+    ac.area_name = t2.area_name AND
+    FORMAT_DATE('%Y-%m', ac.timeseries) = FORMAT_DATE('%Y-%m', PARSE_DATE('%d/%m/%Y', t2.period))
+  LEFT JOIN
+    ${ref("uk_postcodes_table")} t3
+  ON
+    ac.area_code = t3.lad_code AND
+    ac.area_name = t3.lad_name
+),
+
+postcode_counts AS (
+  SELECT
+    lad_code AS area_code,
+    lad_name AS area_name,
+    COUNT(postcode) AS postcode_count
+  FROM
+    ${ref("uk_postcodes_table")}
+  GROUP BY
+    lad_code,
+    lad_name
+),
+
+property_combinations AS (
+  SELECT
+    ht.home_type,
+    bc.bedrooms,
+    ha.home_age,
+    dur.duration
+  FROM
+    (SELECT 'D' AS home_type UNION ALL
+     SELECT 'S' UNION ALL
+     SELECT 'F' UNION ALL
+     SELECT 'T' UNION ALL
+     SELECT 'O') ht
+  CROSS JOIN
+    (SELECT '1' AS bedrooms UNION ALL
+     SELECT '2' UNION ALL
+     SELECT '3' UNION ALL
+     SELECT '4' UNION ALL
+     SELECT 'More than 4') bc
+  CROSS JOIN
+    (SELECT 'true' AS home_age UNION ALL
+     SELECT 'false') ha
+  CROSS JOIN
+    (SELECT 'L' AS duration UNION ALL
+     SELECT 'F') dur
+),
+
+enhanced_data AS (
+  SELECT
+    fd.*,
+    pc.home_type,
+    pc.bedrooms,
+    pc.home_age,
+    pc.duration
+  FROM
+    (SELECT
+      jd.timeseries,
+      jd.home_address_region,
+      jd.area_code,
+      jd.area_name,
+      jd.postcode,
+      jd.rental_price_one_bed,
+      jd.rental_price_two_bed,
+      jd.rental_price_three_bed,
+      jd.rental_price_four_bed,
+      jd.rental_price_detached,
+      jd.rental_price_flat_maisonette,
+      jd.rental_price_semidetached,
+      jd.rental_price_terraced,
+      CASE
+        WHEN pc.postcode_count > 0 THEN CAST(jd.population_value / pc.postcode_count AS INT64)
+        ELSE CAST(jd.population_value AS INT64)
+      END AS population_value_per_postcode
+    FROM
+      joined_data jd
+    LEFT JOIN
+      postcode_counts pc
+    ON
+      jd.area_code = pc.area_code AND
+      jd.area_name = pc.area_name) fd
+  CROSS JOIN
+    property_combinations pc
+)
+
+-- Select and order the final output
+SELECT
+  timeseries,
+  home_address_region,
+  area_code,
+  area_name,
+  postcode,
+  rental_price_one_bed,
+  rental_price_two_bed,
+  rental_price_three_bed,
+  rental_price_four_bed,
+  rental_price_detached,
+  rental_price_flat_maisonette,
+  rental_price_semidetached,
+  rental_price_terraced,
+  population_value_per_postcode AS population_value,
+  home_type,
+  bedrooms,
+  home_age,
+  duration
+FROM
+  enhanced_data
+ORDER BY
+  timeseries, area_code, area_name

@@ -1,9 +1,9 @@
 config {
-  type: "view",
-  columns: {
-    test: "A description for the test column",
-  }
+  type: "table",
+  schema: "uk_real_estate",
+  name: "lat_long_conversion_table"
 }
+
 
 -- Calculate latitude and longitude from concatenated address columns
 

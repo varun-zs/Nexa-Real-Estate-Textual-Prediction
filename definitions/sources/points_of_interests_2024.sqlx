@@ -1,0 +1,48 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "points_of_interests_table"
+}
+
+CREATE TABLE `test-424200.uk_real_estate.points_of_interests_table` AS
+SELECT 
+  n.id,
+  n.name,
+  n.amenity,
+  n.timestamp,
+  ST_AsText(n.geometry) AS geometry,
+  ST_GEOGPOINT(ST_X(n.geometry), ST_Y(n.geometry)) AS geo_location,
+  n.country,
+  f.feature_type,
+  f.feature_description
+FROM 
+  `Osm.history_nodes` AS n
+LEFT JOIN
+  `bigquery-public-data.geo_openstreetmap.planet_features` AS f
+ON
+  n.id = f.id
+WHERE 
+  (n.country IN ('England', 'Wales')) AND
+  (n.timestamp >= '2008-01-01' AND n.timestamp < '2023-01-01') AND
+  (n.amenity IS NOT NULL OR f.feature_type IN (
+    'park', 
+    'hospital', 
+    'clinic', 
+    'school', 
+    'university', 
+    'college', 
+    'parking', 
+    'supermarket', 
+    'atm', 
+    'shopping_mall', 
+    'bank', 
+    'pharmacy', 
+    'employment_hub', 
+    'library',
+    'cinema',
+    'community_centre',
+    'public_building',
+    'sports_centre'
+  ))
+ORDER BY
+  n.timestamp DESC

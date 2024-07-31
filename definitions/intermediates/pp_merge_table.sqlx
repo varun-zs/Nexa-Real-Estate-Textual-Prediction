@@ -1,12 +1,13 @@
 config {
-  type: "view",
+  type: "table",
   schema: "uk_real_estate",
-  name: "pp_merge"
+  name: "pp_merge_table"
 }
 
 -- Create a new column in table2 and join table1 and table2
+CREATE OR REPLACE TABLE `uk_real_estate.pp_merge_table` AS
 SELECT
-  FORMAT_DATE('%m/%Y', PARSE_DATE('%Y-%m-%d 00:00', t1.transfer_date)) AS transfer_date,
+  PARSE_DATE('%Y-%m-%d 00:00', t1.transfer_date) AS transfer_date,
   t1.home_value AS home_value,
   t1.postcode AS home_address_postcode,
   t1.home_type AS home_type,
@@ -28,3 +29,5 @@ LEFT JOIN
   ${ref("sqft_paid_table")} t2
 ON
   t1.transaction_id = t2.transaction_id
+ORDER BY
+  transfer_date

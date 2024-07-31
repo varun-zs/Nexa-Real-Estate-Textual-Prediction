@@ -1,0 +1,17 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "uk_postcodes_table"
+}
+
+CREATE OR REPLACE EXTERNAL TABLE
+  test-424200.uk_real_estate.uk_postcodes_table (
+    postcode STRING,
+    lad_code STRING,
+    lad_name STRING
+    ) 
+    OPTIONS ( 
+      format = 'CSV',
+      uris = ['gs://nexa_real_estate/United Kingdom/uk_postcodes_august_2023.csv'],
+      skip_leading_rows = 1
+    )

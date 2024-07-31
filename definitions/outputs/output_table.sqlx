@@ -1,0 +1,55 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "output_table"
+}
+
+-- Join countries_table with financial_data_merge, population_rent_merge, and income_merge to create the final table
+CREATE OR REPLACE TABLE uk_real_estate.output_table AS
+SELECT
+  c.time_period,
+  c.country,
+  c.region,
+  f.interest_rate,
+  f.inflation_rate,
+  f.political_party,
+  f.mortgage_rates,
+  f.pandemic_severity_rate,
+  pr.area_code,
+  pr.area_name,
+  pr.postcode,
+  pr.rental_price_one_bed,
+  pr.rental_price_two_bed,
+  pr.rental_price_three_bed,
+  pr.rental_price_four_bed,
+  pr.rental_price_detached,
+  pr.rental_price_flat_maisonette,
+  pr.rental_price_semidetached,
+  pr.rental_price_terraced,
+  pr.population_value,
+  i.gross_disposable_income,
+  i.employment_rate,
+  i.gross_median_income,
+  pr.home_type,
+  pr.bedrooms,
+  pr.home_age,
+  pr.duration
+FROM
+  ${ref("countries_table")} c
+LEFT JOIN
+  ${ref("population_rent_merge_table")} pr
+ON
+  c.time_period = pr.timeseries AND
+  c.region = pr.home_address_region
+LEFT JOIN
+  ${ref("financial_data_merge_table")} f
+ON
+  c.time_period = f.timeseries
+LEFT JOIN
+  ${ref("income_merge_table")} i
+ON
+  pr.area_code = i.area_code AND
+  pr.area_name = i.area_name AND
+  c.time_period = i.timeseries
+ORDER BY
+  c.time_period, c.country, pr.area_code, pr.area_name

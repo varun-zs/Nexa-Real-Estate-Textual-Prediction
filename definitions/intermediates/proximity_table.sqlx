@@ -1,0 +1,18 @@
+config {
+  type: "table",
+  schema: "uk_real_estate",
+  name: "proximity_table"
+}
+
+-- Define bounding_area by selecting administrative boundary multipolygon. One can use hardcoded OSM relation ID here.
+WITH bounding_area as (SELECT geometry from `bigquery-public-data.geo_openstreetmap.planet_features`
+        WHERE feature_type="multipolygons"
+          AND ('name:en', 'Netherlands') in (SELECT (key, value) from unnest(all_tags))
+          AND ('boundary', 'administrative') in (SELECT (key, value) from unnest(all_tags))
+          AND ('admin_level', '3') in (SELECT (key, value) from unnest(all_tags))
+     )
+SELECT feature_type, osm_id, osm_timestamp, planet_features.geometry
+  FROM `bigquery-public-data.geo_openstreetmap.planet_features` planet_features, bounding_area
+ WHERE ('man_made', 'bridge') IN (SELECT (key, value) FROM UNNEST(all_tags)) -- Select features with 'man_made=bridge' tag
+   AND ST_DWithin(bounding_area.geometry, planet_features.geometry, 0)  -- Filter only features within bounding_area
+ LIMIT 10
