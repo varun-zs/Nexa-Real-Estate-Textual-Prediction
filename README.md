@@ -57,7 +57,7 @@ The input/independent variables fed into the model are as follows:
 36) Rental_Counts_Area
 37) Rental_Yield
 38) Foreign_Investment
-39) Young_Population
+39) Young_Population -
 
 
 The model will leverage the strengths of Temporal Convolutional Networks (TCN), Long Short-Term Memory (LSTM), and Gated Recurrent Units (GRU) with self-attention mechanisms to capture complex patterns and long-term dependencies in the data.
