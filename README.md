@@ -44,7 +44,7 @@ The input/independent variables fed into the model are as follows:
 23) Political_Party -	
 24) Economy_Region -
 25) Catastrophe_Risk	
-26) Net_Immigrant_No	
+26) Net_Immigrant_No -
 27) Interest Rates -	
 28) Pandemic Probability -
 29) Mortgage Rates -
